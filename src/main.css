@@ -16,8 +16,7 @@ body {
 
 .search-form {
   display: flex;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
   gap: var(--spacing);
 }
 
