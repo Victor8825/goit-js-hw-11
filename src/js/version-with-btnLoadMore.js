@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
 
 
 axios.defaults.baseURL = "https://pixabay.com/api/";
@@ -12,13 +10,6 @@ const formRef = document.querySelector(".search-form");
 const galleryRef = document.querySelector(".gallery");
 const loadMoreBtn = document.querySelector(".load-more");
 let imageName = "";
-
-
-// const modalGalleryOptions = {
-//   captionsData: 'alt',
-//   captionDelay: 250
-// }
-// const modalGallery = new SimpleLightbox(".gallery a", modalGalleryOptions );
 
 function resetPage() {
   page = DEFAULT_PAGE;
@@ -46,7 +37,8 @@ const onRequest = event => {
       // }
       galleryRef.insertAdjacentHTML("beforeend", buildMarkup(response.hits));
       loadMoreBtn.classList.add("is-visible");
-      Notify.info(`Hooray! We found ${response.totalHits} totalHits images`);
+      console.log(response);
+      console.log(page);
       console.log(response.totalHits);
   })
   .catch(error => console.log(error));
@@ -57,9 +49,9 @@ formRef.addEventListener("submit", onRequest )
 
 
 function buildMarkup(imagesArray) {
-  return imagesArray.map( ({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
+  return imagesArray.map( ({webformatURL, tags, likes, views, comments, downloads}) => 
   `<div class="photo-card">
-  <div class="gallery__item"><a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"/></a></div>
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
       <b>Likes</b><br>${likes}
@@ -82,7 +74,7 @@ async function fetchImages (imageName) {
     key: "28318270-6b0da933c6f7f5e767acec2c6",
     q:imageName,
     image_type: "photo",
-    orientation: "horizontal",
+    orientation: "horyzontal",
     safesearch: "true",
     page,
     per_page: 5,
@@ -97,9 +89,3 @@ loadMoreBtn.addEventListener("click", () => {
   fetchImages(imageName)
   .then(response => galleryRef.insertAdjacentHTML("beforeend", buildMarkup(response.hits)));
 });
-
-const simplelightboxOptions = {
-  captionsData: 'alt',
-  captionDelay: 250
-}
-const lightbox = new SimpleLightbox('.gallery div', simplelightboxOptions);
