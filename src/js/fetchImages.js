@@ -3,6 +3,7 @@ import axios from "axios";
 const DEFAULT_PAGE = 1;
 let page = DEFAULT_PAGE;
 let inputText = "";
+let currentHits = 0;
 axios.defaults.baseURL = "https://pixabay.com/api/";
 
 
