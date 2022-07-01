@@ -16,21 +16,11 @@ body {
   padding-left: 80px;
   padding-right: 80px;
   line-height: 1.5;
-  /* -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
-} 
-
-/* .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: calc(var(--spacing) * 3);
-  padding: calc(var(--spacing) * 2);
-  /* overflow: hidden; */
-
+  } 
 
 .search-form {
   position: fixed;
+  z-index: 1;
   top: 0;
   left: 0;
   background-color: coral;
@@ -43,12 +33,21 @@ body {
 }
 
 .search-form > button {
+  border-color: transparent;
+  border-radius: 30px;
   padding: var(--spacing) calc(var(--spacing) * 2);
   text-transform: uppercase;
   cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+}
+.search-form > button:hover {
+  background-color:brown;
+  
 }
 
 .search-form > input {
+  border-color: transparent;
+  border-radius: 30px;
   min-width: 240px;
   max-width: 320px;
   padding: var(--spacing);
@@ -59,7 +58,7 @@ body {
   outline-color: transparent;
 }
 
-.photo-card {
+.gallery__item {
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -71,39 +70,36 @@ body {
   transition: transform var(--animation-duration) var(--timing-function);
 }
 
-.photo-card:hover {
+.gallery__item:hover {
   transform: scale(1.03);
 }
 
-.info {
+.gallery__info {
     display: flex;
     justify-content: space-around;
 }
 
-.info-item {
+.gallery__info-item {
     text-align: center;
 }
 
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: calc(var(--spacing) * 2);
   margin-left: auto;
   margin-right: auto;
-  
-  /* display: grid;
-   max-width: 1140px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-auto-rows: 240px;
-  grid-gap: 12px;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto; */
+
+  @media screen and (min-width: 310px) {
+    display: grid;
+    max-width: 1280px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    grid-gap: 12px;
+    justify-content: center;
+  }
 }
 
 .gallery img {
-  height: auto;
-  max-width: 100%; 
+  height: 240px;
+  width: 100%;
+  object-fit: cover;
   transition: transform var(--animation-duration) var(--timing-function)
  }
 
