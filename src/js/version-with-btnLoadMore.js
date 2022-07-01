@@ -89,3 +89,12 @@ loadMoreBtn.addEventListener("click", () => {
   fetchImages(imageName)
   .then(response => galleryRef.insertAdjacentHTML("beforeend", buildMarkup(response.hits)));
 });
+
+// loadMoreBtnRef.addEventListener("click", () => {
+//   fetchImages(inputText)
+//   .then(response => addImagesToPage(response));
+//   if (currentHits === response.totalHits.length) {
+//     console.log(response)
+//     loadMoreBtnRef.classList.remove("is-visible");
+//   }
+// });

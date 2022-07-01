@@ -1,105 +1,49 @@
-import axios from 'axios';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-
-
-axios.defaults.baseURL = "https://pixabay.com/api/";
-const DEFAULT_PAGE = 1;
-let page = DEFAULT_PAGE;
+import { Notify } from "notiflix/build/notiflix-notify-aio";
+import {resetPage} from "./js/resetPage";
+import {fetchImages} from "./js/fetchImages";
+import { addImagesToPage } from "./js/addImagesToPage";
+import { smoothScroll } from "./js/smoothScroll";
 
 const formRef = document.querySelector(".search-form");
-const galleryRef = document.querySelector(".gallery");
-const loadMoreBtn = document.querySelector(".load-more");
-let imageName = "";
+const scroolControlRef = document.querySelector(".scroll-control");
+let inputText = "";
 
+formRef.addEventListener("submit", getRequestedImages);
 
-// const modalGalleryOptions = {
-//   captionsData: 'alt',
-//   captionDelay: 250
-// }
-// const modalGallery = new SimpleLightbox(".gallery a", modalGalleryOptions );
-
-function resetPage() {
-  page = DEFAULT_PAGE;
-  galleryRef.innerHTML = "";
-};
-
-const onRequest = event => {
+function getRequestedImages (event) {
   event.preventDefault();
-  imageName = event.currentTarget.elements.searchQuery.value;
-  if(imageName === "") {
+  inputText = event.currentTarget.elements.searchQuery.value;
+  if(inputText === "") {
     return Notify.warning("Please type the text in the search bar!");
   }
   resetPage();
-  loadMoreBtn.classList.remove("is-visible");
-  fetchImages(imageName)
+  fetchImages(inputText)
   .then(response => {
       if(response.hits.length === 0 ) {
       return Notify.failure("Sorry, there are no images matching your search query. Please try again.");
       }
-      // if(response.hits.length === response.totalHits) {
-      //   console.log(response.totalHits);
-      //   Notify.info("We're sorry, but you've reached the end of search results.");
-      //   loadMoreBtn.classList.remove("is-visible");
-      //   return;
-      // }
-      galleryRef.insertAdjacentHTML("beforeend", buildMarkup(response.hits));
-      loadMoreBtn.classList.add("is-visible");
+      addImagesToPage(response);
+      scroolControlRef.classList.remove("is-hidden");
+      smoothScroll();
       Notify.info(`Hooray! We found ${response.totalHits} totalHits images`);
-      console.log(response.totalHits);
   })
   .catch(error => console.log(error));
-
 };
-formRef.addEventListener("submit", onRequest )
 
-
-
-function buildMarkup(imagesArray) {
-  return imagesArray.map( ({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
-  `<div class="photo-card">
-  <div class="gallery__item"><a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"/></a></div>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b><br>${likes}
-    </p>
-    <p class="info-item">
-      <b>Views</b><br>${views}
-    </p>
-    <p class="info-item">
-      <b>Comments</b><br>${comments}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b><br>${downloads}
-    </p>
-  </div>
-</div>`).join("");
+const observerOptions = {
+  rootMargin: "350px",
+  threshold: 1.0
 }
 
-async function fetchImages (imageName) {
-  const searchParams = new URLSearchParams({
-    key: "28318270-6b0da933c6f7f5e767acec2c6",
-    q:imageName,
-    image_type: "photo",
-    orientation: "horizontal",
-    safesearch: "true",
-    page,
-    per_page: 5,
+const observer = new IntersectionObserver( (entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      console.log(entry);
+      fetchImages(inputText)
+      .then(response => addImagesToPage(response));
+    }
   });
+}, observerOptions);
 
-  const response = await axios.get(`?${searchParams}`);
-  page += 1;
-  return response.data;
-};
+observer.observe(scroolControlRef);
 
-loadMoreBtn.addEventListener("click", () => {
-  fetchImages(imageName)
-  .then(response => galleryRef.insertAdjacentHTML("beforeend", buildMarkup(response.hits)));
-});
-
-const simplelightboxOptions = {
-  captionsData: 'alt',
-  captionDelay: 250
-}
-const lightbox = new SimpleLightbox('.gallery div', simplelightboxOptions);
